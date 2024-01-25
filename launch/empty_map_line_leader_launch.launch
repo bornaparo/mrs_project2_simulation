@@ -1,0 +1,30 @@
+<launch>
+    <!-- define robots nodes, which formation they use and if someone is leader -->
+    <node name="robot_0" pkg="mrs_project2_simulation" type="agent_node.py" output="screen">
+        <param name="formation_positions_param" type="string" value="empty_line_random_form"/>    
+    </node>
+    <node name="robot_1" pkg="mrs_project2_simulation" type="agent_node.py" output="screen">
+        <param name="formation_positions_param" type="string" value="empty_line_random_form"/>    
+    </node>
+    <node name="robot_2" pkg="mrs_project2_simulation" type="agent_node.py" output="screen">
+        <param name="formation_positions_param" type="string" value="empty_line_random_form"/>    
+    </node>
+    <node name="robot_3" pkg="mrs_project2_simulation" type="agent_node.py" output="screen">
+        <param name="formation_positions_param" type="string" value="empty_line_random_form"/>    
+        <param name="is_leader" type="bool" value="True"/>
+    </node>
+    <node name="robot_4" pkg="mrs_project2_simulation" type="agent_node.py" output="screen">
+        <param name="formation_positions_param" type="string" value="empty_line_random_form"/>    
+    </node>
+    
+    <!-- define which adj mat is used and how many robots are in simulation -->
+    <node name="calc_neighbours_node" pkg="mrs_project2_simulation" type="calc_neighbours_node.py">
+        <param name="num_robots" type="int" value="5"/>    
+        <param name="adjacency_params" type="string" value="empty_line_random_leader_adj"/>    
+    </node>
+
+    <!-- define which launch_params are used from sphero_stage package -->
+    <node name="stage_node" pkg="sphero_stage" type="start.py">
+        <param name="param_file" type="string" value="launch_params_empty_line_random"/>
+    </node>
+</launch>
