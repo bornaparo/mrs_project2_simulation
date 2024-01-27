@@ -63,14 +63,16 @@ class CalcNeighboursNode():
                                 #print(position_j)
                                 euclidean_distance = math.sqrt( (position_i.x - position_j.x)**2 + (position_i.y - position_j.y)**2 )
                                 
-                                print(euclidean_distance)
+                                #print(euclidean_distance)
 
                                 if euclidean_distance < self.radius_value:
+                                    print(f"robot {i} & robot {j} have connetion!")
                                     self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
                                     neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
                                 else:
+                                    print(f"robot {i} & robot {j} does not have connection!")
                                     pass
-                                    print("uso")
+                                    
                                 
 
             #publish neighours
