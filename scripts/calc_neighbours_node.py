@@ -7,6 +7,7 @@ import numpy as np
 from typing import List
 import rospkg
 import math
+import random
 
 class CalcNeighboursNode():
     def __init__(self):
@@ -66,11 +67,17 @@ class CalcNeighboursNode():
                                 #print(euclidean_distance)
 
                                 if euclidean_distance < self.radius_value:
-                                    print(f"robot {i} & robot {j} have connetion!")
-                                    self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
-                                    neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
+                                    random_number = random.randint(0,9)
+                                    
+                                    if random_number == 5:
+                                        # simulira izguvljenu konekciju/paket
+                                        print(f"robot {i} & robot {j} lost connection!")
+                                    else:
+                                        #print(f"robot {i} & robot {j} have connetion!")
+                                        self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
+                                        neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
                                 else:
-                                    print(f"robot {i} & robot {j} does not have connection!")
+                                    #print(f"robot {i} & robot {j} does not have connection!")
                                     pass
                                     
                                 
