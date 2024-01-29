@@ -64,19 +64,15 @@ class AgentNode():
             if np.linalg.norm([self.x - self.formation_position_x, self.y - self.formation_position_y]) < 0.05: #ako je udaljen od zeljene pocetne tocke za manje od 0.05
                 self.initial_pos_set = True
 
-            if self.initial_pos_set: #ako je dosao do pocetne pozicije onda gledaj i ostala gibanja i odrzavaj razmak
-                if self.is_leader: #ako je leader, nece ni uzlazi u ovaj neighbours loop jer nema ni jednog susjeda,,, on ne prima pozicije od nikog i ne updatea svoju poziciju s obzirom na druge
-                    vel_x = self.goal_position_x - self.x
-                    vel_y = self.goal_position_y - self.y
+            if self.is_leader: #ako je leader, nece ni uzlazi u ovaj neighbours loop jer nema ni jednog susjeda,,, on ne prima pozicije od nikog i ne updatea svoju poziciju s obzirom na druge
+                vel_x = self.goal_position_x - self.x
+                vel_y = self.goal_position_y - self.y
 
-                for neighbour in self.neighbours_odoms:
-                    neigh_x, neigh_y = neighbour.pose.pose.position.x, neighbour.pose.pose.position.y
-                    neigh_index = int(neighbour.child_frame_id)
-                    vel_x += (neigh_x - self.x) - (self.formations[neigh_index, 0] - self.formation_position_x)
-                    vel_y += (neigh_y - self.y) - (self.formations[neigh_index, 1] - self.formation_position_y)
-            else: #ako nije dosao do pocetne pozicije, onda odi prema njoj i ne gledaj ostala gibanja
-                vel_x = self.formation_position_x - self.x
-                vel_y = self.formation_position_y - self.y
+            for neighbour in self.neighbours_odoms:
+                neigh_x, neigh_y = neighbour.pose.pose.position.x, neighbour.pose.pose.position.y
+                neigh_index = int(neighbour.child_frame_id)
+                vel_x += (neigh_x - self.x) - (self.formations[neigh_index, 0] - self.formation_position_x)
+                vel_y += (neigh_y - self.y) - (self.formations[neigh_index, 1] - self.formation_position_y)
 
             if np.linalg.norm([vel_x, vel_y]) > 0.05: #inace ce djelit s 0 (ako je == 0, ovo da ne skalira bezveze ako je dosta mala brzina)
                 desired_norm = 0.5
