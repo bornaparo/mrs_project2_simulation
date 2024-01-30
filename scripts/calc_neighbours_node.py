@@ -16,6 +16,9 @@ class CalcNeighboursNode():
         PUB_RATE = 10
 
         self.num_robots = rospy.get_param('~num_robots', default=3) #int
+        self.switch = rospy.get_param('~switch', default= False)
+        self.radius_value = rospy.get_param('~radius', default= 0.2)
+        
         package = rospkg.RosPack().get_path('mrs_project2_simulation')
         #adjacency matrix
         adj_mat_file = rospy.get_param('~adjacency_params', default="empty_triangle_random_adj")
@@ -27,8 +30,7 @@ class CalcNeighboursNode():
         [rospy.Subscriber(f'/robot_{robot_id}/odom', Odometry, self.robots_odom_callback, callback_args=robot_id) for robot_id in range(self.num_robots)] #callback_args (any) - additional arguments to pass to the callback. This is useful when you wish to reuse the same callback for multiple subscriptions.
         self.rate = rospy.Rate(PUB_RATE) #frekvencija kojom publisha poruke, nece affectat to da missas poruke koje dobivas, ovo utjece samo na publishanje
 
-        self.switch = True
-        self.radius_value = 0.2
+        
 
     def robots_odom_callback(self, robot_odom, robot_id):
         self.odoms[robot_id] = robot_odom
