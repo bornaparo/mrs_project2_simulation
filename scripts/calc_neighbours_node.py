@@ -36,44 +36,29 @@ class CalcNeighboursNode():
         self.odoms[robot_id] = robot_odom
         
     def run(self):
+        
         while not rospy.is_shutdown():
             neighbours_dict = {f"robot_{i}": [] for i in range(self.num_robots)}
             
-            if self.switch == False:
-                if None not in self.odoms: #ako je popunjena lista sa ne None vrijednostima tj popunjena je odom podacima
-                    for i in range(self.num_robots):
-                        for j in range(self.num_robots):
-                            if i == j:
-                                continue
-                            if self.adjacency_matrix[i, j]: #ako i-ti šalje j-tom svoju odometriju (poziciju) (ako self.adjacency_matrix[i, j] nije 0)
-                                self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
-                                neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
 
-            else:
-                # Switching topology
-                if None not in self.odoms: #ako je popunjena lista sa ne None vrijednostima tj popunjena je odom podacima
-                    for i in range(self.num_robots):
-                        for j in range(self.num_robots):
-                            if i == j:
-                                continue
-                            #print(self.num_robots)
-                            if self.adjacency_matrix[i, j]:
+            if None not in self.odoms: #ako je popunjena lista sa ne None vrijednostima tj popunjena je odom podacima
+                for i in range(self.num_robots):
+                    for j in range(self.num_robots):
+                        if i == j:
+                            continue
+                        if self.adjacency_matrix[i, j]: #ako i-ti šalje j-tom svoju odometriju (poziciju) (ako self.adjacency_matrix[i, j] nije 0)
+                            
+                            if self.switch :
                                 position_i = self.odoms[i].twist.twist.linear
                                 position_j = self.odoms[j].twist.twist.linear
-                                
-                                #print("poristions")
-                                #print(position_i)
-                                #print(position_j)
                                 euclidean_distance = math.sqrt( (position_i.x - position_j.x)**2 + (position_i.y - position_j.y)**2 )
-                                
-                                #print(euclidean_distance)
-
                                 if euclidean_distance < self.radius_value:
-                                    random_number = random.randint(0,9)
-                                    
-                                    if random_number == 5:
-                                        # simulira izguvljenu konekciju/paket
-                                        print(f"robot {i} & robot {j} lost connection!")
+                                    random_number1 = random.randint(0,9)
+                                    random_number2 = random.randint(0,9)
+                                    if random_number1 == random_number2:
+                                        # simulira izgubljenu konekciju/paket
+                                        #print(f"robot {i} & robot {j} lost connection!")
+                                        pass
                                     else:
                                         #print(f"robot {i} & robot {j} have connetion!")
                                         self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
@@ -81,8 +66,11 @@ class CalcNeighboursNode():
                                 else:
                                     #print(f"robot {i} & robot {j} does not have connection!")
                                     pass
-                                    
-                                
+                            
+                            else:
+                                self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
+                                neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
+                                                
 
             #publish neighours
             for i, pub in enumerate(self.publisher_neighbours):
