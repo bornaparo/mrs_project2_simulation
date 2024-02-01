@@ -20,7 +20,9 @@
     <!-- define which adj mat is used and how many robots are in simulation -->
     <node name="calc_neighbours_node" pkg="mrs_project2_simulation" type="calc_neighbours_node.py" output="screen">
         <param name="num_robots" type="int" value="5"/>    
-        <param name="adjacency_params" type="string" value="empty_line_random_leader_adj"/>    
+        <param name="adjacency_params" type="string" value="empty_line_random_leader_adj"/>  
+        <param name="switch" type="boolean" value="True"/>   
+        <param name="radius" type="double" value="0.2"/>   
     </node>
 
     <!-- define which launch_params are used from sphero_stage package -->

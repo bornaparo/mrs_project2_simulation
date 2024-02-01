@@ -9,13 +9,13 @@
         <param name="formation_positions_param" type="string" value="empty_triangle_random_form"/>    
     </node>
     
-    <node name="calc_neighbours_node" pkg="mrs_project2_simulation" type="calc_neighbours_node.py">
+    <node name="calc_neighbours_node" pkg="mrs_project2_simulation" type="calc_neighbours_node.py" output="screen">
         <param name="num_robots" type="int" value="3"/>    
         <param name="adjacency_params" type="string" value="empty_triangle_random_adj"/>    
     </node>
 
 
-    <node name="stage_node" pkg="sphero_stage" type="start.py">
+    <node name="stage_node" pkg="sphero_stage" type="start.py" output="screen">
         <param name="param_file" type="string" value="launch_params_empty_triangle_random"/>
     </node>
 </launch>
