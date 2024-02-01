@@ -60,10 +60,7 @@ class AgentNode():
         while not rospy.is_shutdown():
             vel_x = 0 #vel za izracunat i outputat, a self.vel_x je trenutni vel dobiven iz odometrij
             vel_y = 0
-
-            if np.linalg.norm([self.x - self.formation_position_x, self.y - self.formation_position_y]) < 0.05: #ako je udaljen od zeljene pocetne tocke za manje od 0.05
-                self.initial_pos_set = True
-
+            
             if self.is_leader: #ako je leader, nece ni uzlazi u ovaj neighbours loop jer nema ni jednog susjeda,,, on ne prima pozicije od nikog i ne updatea svoju poziciju s obzirom na druge
                 vel_x = self.goal_position_x - self.x
                 vel_y = self.goal_position_y - self.y
