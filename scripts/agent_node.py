@@ -29,7 +29,7 @@ class AgentNode():
         self.formations = np.loadtxt(package + f"/formation_positions/{formation_positions_param}.txt", delimiter=" ", comments="#")
         self.formation_position_x = self.formations[robot_num, 0]
         self.formation_position_y = self.formations[robot_num, 1]
-        self.avoidance_factor = 0.5
+        self.avoidance_factor = 0.25
 
         self.is_leader = rospy.get_param('~is_leader', default=False)
         if self.is_leader:
