@@ -17,7 +17,7 @@ class CalcNeighboursNode():
 
         self.num_robots = rospy.get_param('~num_robots', default=3) #int
         self.switch = rospy.get_param('~switch', default= False)
-        self.radius_value = rospy.get_param('~radius', default= 0.2)
+        self.radius_value = rospy.get_param('~radius', default=0.2)
         
         package = rospkg.RosPack().get_path('mrs_project2_simulation')
         #adjacency matrix
@@ -39,7 +39,6 @@ class CalcNeighboursNode():
         
         while not rospy.is_shutdown():
             neighbours_dict = {f"robot_{i}": [] for i in range(self.num_robots)}
-            
 
             if None not in self.odoms: #ako je popunjena lista sa ne None vrijednostima tj popunjena je odom podacima
                 for i in range(self.num_robots):
@@ -48,7 +47,7 @@ class CalcNeighboursNode():
                             continue
                         if self.adjacency_matrix[i, j]: #ako i-ti šalje j-tom svoju odometriju (poziciju) (ako self.adjacency_matrix[i, j] nije 0)
                             
-                            if self.switch :
+                            if self.switch:
                                 position_i = self.odoms[i].twist.twist.linear
                                 position_j = self.odoms[j].twist.twist.linear
                                 euclidean_distance = math.sqrt( (position_i.x - position_j.x)**2 + (position_i.y - position_j.y)**2 )

@@ -14,7 +14,8 @@
         <param name="num_robots" type="int" value="3"/>    
         <param name="adjacency_params" type="string" value="empty_triangle_random_leader_adj"/>    
         <param name="switch" type="boolean" value="True"/>   
-        <param name="radius" type="double" value="0.2"/>   
+        <!-- <param name="radius" type="double" value="0.2"/> prekratko pa ne pricaju ni ne micu se   --> 
+        <param name="radius" type="double" value="1"/>   
     </node>
 
 
