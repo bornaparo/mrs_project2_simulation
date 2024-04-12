@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import rospy
+from geometry_msgs.msg import Point
 from std_msgs.msg import String
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, OccupancyGrid
+from sensor_msgs.msg import PointCloud
 from mrs_project_simulation.msg import Neighbours
 import numpy as np
 from typing import List
@@ -25,21 +27,45 @@ class CalcNeighboursNode():
         self.adjacency_matrix = np.loadtxt(package + f'/adjacency_params/{adj_mat_file}.txt', delimiter=" ", comments="#")
 
         self.publisher_neighbours = [rospy.Publisher(f"/robot_{i}/neighbours", Neighbours, queue_size=PUB_RATE) for i in range(self.num_robots)]
+        self.publisher_obstacles = [rospy.Publisher(f"/robot_{i}/obstacles", PointCloud, queue_size=PUB_RATE) for i in range(self.num_robots)]
+        self.obstacles = PointCloud()
         self.odoms: List[Odometry] = [None] * self.num_robots
+        self.r = 1
 
         [rospy.Subscriber(f'/robot_{robot_id}/odom', Odometry, self.robots_odom_callback, callback_args=robot_id) for robot_id in range(self.num_robots)] #callback_args (any) - additional arguments to pass to the callback. This is useful when you wish to reuse the same callback for multiple subscriptions.
+        rospy.Subscriber("/map", OccupancyGrid, self.map_callback, queue_size=1) #tu calc_neighbours_node publisha odom susjeda od ovog node-a
         self.rate = rospy.Rate(PUB_RATE) #frekvencija kojom publisha poruke, nece affectat to da missas poruke koje dobivas, ovo utjece samo na publishanje
 
         
 
     def robots_odom_callback(self, robot_odom, robot_id):
         self.odoms[robot_id] = robot_odom
+
+    def map_callback(self, grid: OccupancyGrid):
+        width = grid.info.width
+        height = grid.info.height
+        resolution = grid.info.resolution
+        origin_x = grid.info.origin.position.x
+        origin_y = grid.info.origin.position.y
+
+        points = PointCloud()
+        for y in range(height):
+            for x in range(width):
+                index = x + y * width
+                if grid.data[index] > 0:
+                    point = Point()
+                    point.x = origin_x + x * resolution
+                    point.y = origin_y + y * resolution
+                    points.points.append(point)
+
+        self.obstacles = points
         
     def run(self):
         
         while not rospy.is_shutdown():
             neighbours_dict = {f"robot_{i}": [] for i in range(self.num_robots)}
-
+            nearest_obs = {f"robot_{i}": PointCloud() for i in range(self.num_robots)}
+            
             if None not in self.odoms: #ako je popunjena lista sa ne None vrijednostima tj popunjena je odom podacima
                 for i in range(self.num_robots):
                     for j in range(self.num_robots):
@@ -69,6 +95,16 @@ class CalcNeighboursNode():
                             else:
                                 self.odoms[i].child_frame_id = str(i) #da bi mogao vidjet ko je to poslao i onda dobit od njega zetu, a da ne moram mjenjat poruku i nes dodatno komplicirat
                                 neighbours_dict[f'robot_{j}'].append(self.odoms[i]) #j-ti robot prima odometriju od i-tog i uskladuje se (mice se) s obzirom na to
+
+                    curr_odom = self.odoms[i]
+                    obstacles = PointCloud()
+                    curr_x, curr_y = curr_odom.pose.pose.position.x, curr_odom.pose.pose.position.y 
+                    for obst in self.obstacles.points:
+                        d = np.sqrt((obst.x - curr_x)**2 + (obst.y - curr_y)**2)
+                        if d <= self.r: #unutar kruga
+                            obstacles.points.append(obst)
+
+                    nearest_obs[f"robot_{i}"] = obstacles
                                                 
 
             #publish neighours
@@ -77,6 +113,8 @@ class CalcNeighboursNode():
                 msg.neighbours_odoms = neighbours_dict[f"robot_{i}"]
                 pub.publish(msg)
             
+            for i, pub in enumerate(self.publisher_obstacles):
+                pub.publish(nearest_obs[f"robot_{i}"])
 
             self.rate.sleep()
             pass
