@@ -125,7 +125,7 @@ Who can communicate with whom is defined as adjacency matrix in `.txt` file wher
 
 Describes that first robot sends messages to the second, second sends messages to the third, and third sends messages to the first.  This formation is shown in image below:
 
-<img  src="assets/adj_mat_preview.png" width="200"/>
+<img  src="assets/adj_mat_preview.png"/>
 
 ## Formation
 
